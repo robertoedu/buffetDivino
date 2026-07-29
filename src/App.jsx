@@ -267,6 +267,7 @@ function SectionLink({
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [pageReady, setPageReady] = useState(false)
   const [showFloatingWhatsapp, setShowFloatingWhatsapp] = useState(false)
 
   const closeMenu = () => setMenuOpen(false)
@@ -279,6 +280,92 @@ function App() {
         `${window.location.pathname}${window.location.search}`,
       )
     }
+  }, [])
+
+  useEffect(() => {
+    let secondFrame
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => setPageReady(true))
+    })
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame)
+      window.cancelAnimationFrame(secondFrame)
+    }
+  }, [])
+
+  useEffect(() => {
+    const revealSelectors = [
+      '.about-section .section-label',
+      '.about-content > .section-kicker',
+      '.about-content > h2',
+      '.about-lead',
+      '.values-grid article',
+      '.service-section .section-label',
+      '.service-heading > *',
+      '.service-grid article',
+      '.service-note',
+      '.process-heading > *',
+      '.process-grid article',
+      '.menu-heading > *',
+      '.menu-inspirations-heading > *',
+      '.menu-inspirations-grid article',
+      '.menu-inspirations-footer',
+      '.gallery figure',
+      '.testimonials-section .section-label',
+      '.testimonials-heading > *',
+      '.testimonial-carousel',
+      '.faq-section .section-label',
+      '.faq-content > .section-kicker',
+      '.faq-content > h2',
+      '.faq-item',
+      '.cta-copy > *',
+      '.cta-image',
+      '.site-footer > *',
+    ]
+
+    const revealItems = [
+      ...document.querySelectorAll(revealSelectors.join(',')),
+    ]
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    revealItems.forEach((item, index) => {
+      item.classList.add('reveal-on-scroll')
+      item.style.setProperty('--reveal-delay', `${(index % 4) * 70}ms`)
+
+      if (
+        item.matches('.gallery figure, .cta-image') ||
+        item.closest('.menu-inspirations-grid')
+      ) {
+        item.classList.add('reveal-scale')
+      }
+    })
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      revealItems.forEach((item) => item.classList.add('is-revealed'))
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+
+          entry.target.classList.add('is-revealed')
+          observer.unobserve(entry.target)
+        })
+      },
+      {
+        rootMargin: '0px 0px -9% 0px',
+        threshold: 0.08,
+      },
+    )
+
+    revealItems.forEach((item) => observer.observe(item))
+
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -321,7 +408,7 @@ function App() {
   }, [])
 
   return (
-    <div className="site-shell">
+    <div className={`site-shell ${pageReady ? 'is-ready' : ''}`}>
       <header className="site-header">
         <SectionLink className="brand" target="inicio" onClick={closeMenu}>
           <span className="brand-mark">
@@ -441,18 +528,28 @@ function App() {
         </section>
 
         <nav className="marquee" aria-label="Tipos de evento atendidos">
-          <div>
-            {eventTypes.map((event, index) => (
-              <span className="event-link-group" key={event.label}>
-                <WhatsAppLink
-                  message={`Olá! Gostaria de solicitar um orçamento para ${event.subject}.`}
-                >
-                  {event.label}
-                </WhatsAppLink>
-                {index < eventTypes.length - 1 && (
-                  <i aria-hidden="true">✦</i>
-                )}
-              </span>
+          <div className="marquee-track">
+            {[false, true].map((isDuplicate) => (
+              <div
+                className="marquee-group"
+                aria-hidden={isDuplicate || undefined}
+                key={isDuplicate ? 'duplicate' : 'original'}
+              >
+                {eventTypes.map((event) => (
+                  <span
+                    className="event-link-group"
+                    key={`${isDuplicate ? 'duplicate-' : ''}${event.label}`}
+                  >
+                    <WhatsAppLink
+                      message={`Olá! Gostaria de solicitar um orçamento para ${event.subject}.`}
+                      tabIndex={isDuplicate ? -1 : undefined}
+                    >
+                      {event.label}
+                    </WhatsAppLink>
+                    <i aria-hidden="true">✦</i>
+                  </span>
+                ))}
+              </div>
             ))}
           </div>
         </nav>

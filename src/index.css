@@ -413,9 +413,8 @@ blockquote {
 }
 
 .marquee {
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 18px max(24px, calc((100vw - 1380px) / 2));
+  overflow: hidden;
+  padding: 18px 0;
   color: var(--green);
   background: var(--secondary);
   scrollbar-width: none;
@@ -425,12 +424,24 @@ blockquote {
   display: none;
 }
 
-.marquee div {
+.marquee-track {
   display: flex;
-  min-width: max-content;
+  width: max-content;
+  animation: marquee-flow 30s linear infinite;
+  will-change: transform;
+}
+
+.marquee-group {
+  display: flex;
+  flex: 0 0 auto;
   align-items: center;
-  justify-content: space-between;
   gap: clamp(10px, 1.5vw, 24px);
+  padding-right: clamp(10px, 1.5vw, 24px);
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
 }
 
 .event-link-group {
@@ -460,6 +471,12 @@ blockquote {
 
 .marquee i {
   font-style: normal;
+}
+
+@keyframes marquee-flow {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .section {
@@ -1309,11 +1326,165 @@ blockquote {
   white-space: nowrap;
 }
 
+/* Entrada inicial e revelação progressiva das seções */
+.site-header,
+.hero-copy > *,
+.hero-image,
+.marquee {
+  transition:
+    opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-shell:not(.is-ready) .site-header {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-18px);
+}
+
+.site-shell:not(.is-ready) .hero-copy > * {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.site-shell:not(.is-ready) .hero-image-main {
+  opacity: 0;
+  transform: translateX(32px) scale(0.97);
+}
+
+.site-shell:not(.is-ready) .hero-image-secondary {
+  opacity: 0;
+  transform: translateY(34px) scale(0.95);
+}
+
+.site-shell:not(.is-ready) .marquee {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.site-shell.is-ready .hero-copy > :nth-child(1) {
+  transition-delay: 100ms;
+}
+
+.site-shell.is-ready .hero-copy > :nth-child(2) {
+  transition-delay: 190ms;
+}
+
+.site-shell.is-ready .hero-copy > :nth-child(3) {
+  transition-delay: 280ms;
+}
+
+.site-shell.is-ready .hero-copy > :nth-child(4) {
+  transition-delay: 360ms;
+}
+
+.site-shell.is-ready .hero-copy > :nth-child(5) {
+  transition-delay: 440ms;
+}
+
+.site-shell.is-ready .hero-image-main {
+  transition-delay: 180ms;
+}
+
+.site-shell.is-ready .hero-image-secondary {
+  transition-delay: 340ms;
+}
+
+.site-shell.is-ready .marquee {
+  transition-delay: 520ms;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.reveal-scale {
+  transform: translateY(22px) scale(0.975);
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+.values-grid article,
+.service-grid article,
+.process-grid article,
+.menu-inspirations-grid article,
+.testimonial-card,
+.faq-item {
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.values-grid article:hover,
+.service-grid article:hover,
+.process-grid article:hover,
+.menu-inspirations-grid article:hover,
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.menu-inspirations-grid article:hover,
+.testimonial-card:hover {
+  box-shadow: 0 18px 46px rgba(83, 6, 31, 0.12);
+}
+
+.faq-item:hover {
+  border-color: rgba(83, 6, 31, 0.36);
+}
+
 a:focus-visible,
 button:focus-visible {
   border-radius: 5px;
   outline: 3px solid var(--green-light);
   outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .site-shell:not(.is-ready) .site-header,
+  .site-shell:not(.is-ready) .hero-copy > *,
+  .site-shell:not(.is-ready) .hero-image,
+  .site-shell:not(.is-ready) .marquee,
+  .reveal-on-scroll,
+  .reveal-on-scroll.reveal-scale {
+    opacity: 1;
+    transform: none;
+  }
+
+  .marquee {
+    overflow-x: auto;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .marquee-group[aria-hidden="true"] {
+    display: none;
+  }
 }
 
 @media (max-width: 1050px) {
