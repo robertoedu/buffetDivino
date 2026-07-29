@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import Faq from './components/Faq.jsx'
+import TestimonialCarousel from './components/TestimonialCarousel.jsx'
 
-const whatsappMessage = 'Oi, quero fazer um orçamento para um evento'
-const whatsappUrl = `https://wa.me/5551999333072?text=${encodeURIComponent(
-  whatsappMessage,
-)}`
+const whatsappMessage =
+  'Olá! Gostaria de solicitar um orçamento para meu evento.'
+
+const eventTypes = [
+  { label: 'Casamentos', subject: 'um casamento' },
+  { label: 'Formaturas', subject: 'uma formatura' },
+  { label: '15 anos', subject: 'uma festa de 15 anos' },
+  { label: 'Batizados', subject: 'um batizado' },
+  { label: 'Confraternizações', subject: 'uma confraternização' },
+]
 
 const testimonials = [
   {
@@ -53,37 +61,205 @@ const testimonials = [
 
 const gallery = [
   {
-    src: '/images/buffet-saladas.png',
+    src: '/images/buffet-saladas.webp',
     alt: 'Mesa de buffet com saladas, legumes e frutas',
+    width: 810,
+    height: 974,
     className: 'gallery-featured',
   },
   {
-    src: '/images/buffet-acompanhamentos.png',
+    src: '/images/buffet-acompanhamentos.webp',
     alt: 'Acompanhamentos assados servidos no buffet',
+    width: 797,
+    height: 966,
   },
   {
-    src: '/images/buffet-prato-quente.png',
+    src: '/images/buffet-prato-quente.webp',
     alt: 'Prato quente gratinado e acompanhamentos',
+    width: 798,
+    height: 980,
   },
   {
-    src: '/images/buffet-carnes.png',
+    src: '/images/buffet-carnes.webp',
     alt: 'Seleção de carnes servidas no buffet',
+    width: 778,
+    height: 980,
   },
   {
-    src: '/images/buffet-arroz.png',
+    src: '/images/buffet-arroz.webp',
     alt: 'Opções de arroz servidas no buffet',
+    width: 774,
+    height: 978,
   },
 ]
 
-function WhatsAppLink({ children, className = '' }) {
+const menuInspirations = [
+  {
+    name: 'Tradicional',
+    description: 'Sabores conhecidos, com aquele cuidado de comida de casa.',
+    items: [
+      'Carnes de gado, porco e salsichão',
+      'Arroz',
+      'Polenta frita ou batata frita',
+      'Maionese e variedade de saladas',
+    ],
+  },
+  {
+    name: 'Clássico',
+    description: 'Uma combinação completa para celebrações especiais.',
+    items: [
+      'Gado, porco e galeto',
+      'Arroz e massa com molho',
+      'Polenta frita ou cuca',
+      'Saladas, frutas da época e abacaxi assado',
+    ],
+  },
+  {
+    name: 'Premium',
+    description: 'Mais variedade para uma experiência gastronômica marcante.',
+    items: [
+      'Picanha, entrecot, maminha, porco e galeto',
+      'Arroz tradicional e arroz à grega',
+      'Nhoque, lasanha, purê e strogonoff',
+      'Saladas, frutas da época e farofa',
+    ],
+  },
+]
+
+const serviceHighlights = [
+  {
+    number: '01',
+    title: 'Proposta personalizada',
+    text: 'O formato do serviço e as opções são alinhados ao perfil da sua celebração.',
+  },
+  {
+    number: '02',
+    title: 'Preparo cuidadoso',
+    text: 'Comida saborosa, apresentação caprichada e atenção em cada detalhe.',
+  },
+  {
+    number: '03',
+    title: 'Atendimento no evento',
+    text: 'Uma equipe próxima e atenta à apresentação e à reposição dos alimentos.',
+  },
+]
+
+const processSteps = [
+  {
+    number: '01',
+    title: 'Conte sobre seu evento',
+    text: 'Compartilhe a data, o tipo de celebração e o que você imagina.',
+  },
+  {
+    number: '02',
+    title: 'Receba uma proposta',
+    text: 'As opções são organizadas de acordo com as necessidades do evento.',
+  },
+  {
+    number: '03',
+    title: 'Defina os detalhes',
+    text: 'Alinhe o cardápio e os pontos importantes antes da celebração.',
+  },
+  {
+    number: '04',
+    title: 'Aproveite o momento',
+    text: 'No grande dia, curta seus convidados enquanto o buffet cuida do serviço.',
+  },
+]
+
+const faqItems = [
+  {
+    question: 'Quais cidades vocês atendem?',
+    answer:
+      'A região de atendimento ainda precisa ser confirmada. Informe o local do seu evento pelo WhatsApp para consultar a disponibilidade.',
+    pending: true,
+  },
+  {
+    question: 'Qual é o número mínimo de convidados?',
+    answer:
+      'O número mínimo ainda não foi informado. Envie a quantidade estimada de convidados para receber uma orientação.',
+    pending: true,
+  },
+  {
+    question: 'O serviço inclui equipe de atendimento?',
+    answer:
+      'A composição da equipe pode variar conforme o formato do evento. Os profissionais incluídos serão detalhados na proposta.',
+    pending: true,
+  },
+  {
+    question: 'É possível personalizar o cardápio?',
+    answer:
+      'O atendimento é personalizado e as opções são alinhadas ao perfil do evento. Consulte as possibilidades disponíveis para a sua data.',
+  },
+  {
+    question: 'Há opções para restrições alimentares?',
+    answer:
+      'Essa disponibilidade precisa ser confirmada conforme a restrição e o cardápio desejado. Informe as necessidades ao solicitar a proposta.',
+    pending: true,
+  },
+  {
+    question: 'Com quanto tempo de antecedência devo reservar?',
+    answer:
+      'A antecedência recomendada ainda precisa ser confirmada e pode depender da data. Consulte a agenda assim que definir o evento.',
+    pending: true,
+  },
+  {
+    question: 'Como funciona o pagamento?',
+    answer:
+      'As condições de pagamento serão apresentadas junto com a proposta personalizada.',
+    pending: true,
+  },
+]
+
+function getWhatsappUrl(message = whatsappMessage) {
+  return `https://wa.me/5551999333072?text=${encodeURIComponent(message)}`
+}
+
+function WhatsAppLink({
+  children,
+  className = '',
+  message = whatsappMessage,
+  ...props
+}) {
   return (
     <a
       className={className}
-      href={whatsappUrl}
+      href={getWhatsappUrl(message)}
       target="_blank"
       rel="noreferrer"
       aria-label="Abrir conversa com o Buffet Divino pelo WhatsApp"
+      {...props}
     >
+      {children}
+    </a>
+  )
+}
+
+function SectionLink({
+  children,
+  className = '',
+  target,
+  onClick,
+  ...props
+}) {
+  const handleClick = (event) => {
+    event.preventDefault()
+    onClick?.(event)
+
+    document.getElementById(target)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}${window.location.search}`,
+    )
+  }
+
+  return (
+    <a className={className} href="/" onClick={handleClick} {...props}>
       {children}
     </a>
   )
@@ -91,21 +267,76 @@ function WhatsAppLink({ children, className = '' }) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showFloatingWhatsapp, setShowFloatingWhatsapp] = useState(false)
 
   const closeMenu = () => setMenuOpen(false)
+
+  useEffect(() => {
+    if (window.location.hash) {
+      window.history.replaceState(
+        null,
+        '',
+        `${window.location.pathname}${window.location.search}`,
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', menuOpen)
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') closeMenu()
+    }
+
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.body.classList.remove('menu-open')
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    const visibleCtas = new Set()
+    const observedCtas = document.querySelectorAll('.inline-whatsapp-cta')
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleCtas.add(entry.target)
+          } else {
+            visibleCtas.delete(entry.target)
+          }
+        })
+
+        setShowFloatingWhatsapp(visibleCtas.size === 0)
+      },
+      { threshold: 0.2 },
+    )
+
+    observedCtas.forEach((cta) => observer.observe(cta))
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a className="brand" href="#inicio" onClick={closeMenu}>
+        <SectionLink className="brand" target="inicio" onClick={closeMenu}>
           <span className="brand-mark">
-            <img src="/images/logo-buffet-divino.png" alt="" />
+            <img
+              src="/images/logo-buffet-divino.png"
+              alt=""
+              width="576"
+              height="586"
+            />
           </span>
           <span>
             <strong>Buffet</strong>
             <small>divino</small>
           </span>
-        </a>
+        </SectionLink>
 
         <button
           className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
@@ -124,17 +355,31 @@ function App() {
           id="main-navigation"
           aria-label="Navegação principal"
         >
-          <a href="#sobre" onClick={closeMenu}>
+          <SectionLink target="sobre" onClick={closeMenu}>
             Sobre
-          </a>
-          <a href="#cardapio" onClick={closeMenu}>
+          </SectionLink>
+          <SectionLink target="cardapio" onClick={closeMenu}>
             Nosso buffet
-          </a>
-          <a href="#depoimentos" onClick={closeMenu}>
+          </SectionLink>
+          <SectionLink target="depoimentos" onClick={closeMenu}>
             Depoimentos
-          </a>
-          <WhatsAppLink className="nav-cta">Pedir orçamento</WhatsAppLink>
+          </SectionLink>
+          <SectionLink target="duvidas" onClick={closeMenu}>
+            Dúvidas
+          </SectionLink>
+          <WhatsAppLink className="nav-cta" onClick={closeMenu}>
+            Pedir orçamento
+          </WhatsAppLink>
         </nav>
+
+        {menuOpen && (
+          <button
+            className="menu-backdrop"
+            type="button"
+            aria-label="Fechar menu"
+            onClick={closeMenu}
+          />
+        )}
       </header>
 
       <main>
@@ -149,14 +394,14 @@ function App() {
               com carinho para celebrar os seus melhores momentos.
             </p>
             <div className="hero-actions">
-              <WhatsAppLink className="button button-primary">
-                Solicitar orçamento
+              <WhatsAppLink className="button button-primary inline-whatsapp-cta">
+                Solicitar orçamento pelo WhatsApp
                 <span aria-hidden="true">↗</span>
               </WhatsAppLink>
-              <a className="text-link" href="#cardapio">
+              <SectionLink className="text-link" target="cardapio">
                 Conheça nosso trabalho
                 <span aria-hidden="true">↓</span>
-              </a>
+              </SectionLink>
             </div>
             <div className="hero-proof">
               <div className="avatars" aria-hidden="true">
@@ -171,17 +416,25 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-visual" aria-label="Pratos preparados pelo Buffet Divino">
+          <div
+            className="hero-visual"
+            aria-label="Pratos preparados pelo Buffet Divino"
+          >
             <div className="hero-image hero-image-main">
               <img
-                src="/images/buffet-saladas.png"
+                src="/images/buffet-saladas.webp"
                 alt="Mesa colorida com saladas e acompanhamentos"
+                width="810"
+                height="974"
+                fetchPriority="high"
               />
             </div>
             <div className="hero-image hero-image-secondary">
               <img
-                src="/images/buffet-carnes.png"
+                src="/images/buffet-carnes.webp"
                 alt="Carnes preparadas e servidas no buffet"
+                width="778"
+                height="980"
               />
             </div>
             <div className="hero-note">
@@ -194,19 +447,22 @@ function App() {
           </div>
         </section>
 
-        <section className="marquee" aria-label="Tipos de evento atendidos">
+        <nav className="marquee" aria-label="Tipos de evento atendidos">
           <div>
-            <span>Casamentos</span>
-            <i>✦</i>
-            <span>Formaturas</span>
-            <i>✦</i>
-            <span>15 anos</span>
-            <i>✦</i>
-            <span>Batizados</span>
-            <i>✦</i>
-            <span>Confraternizações</span>
+            {eventTypes.map((event, index) => (
+              <span className="event-link-group" key={event.label}>
+                <WhatsAppLink
+                  message={`Olá! Gostaria de solicitar um orçamento para ${event.subject}.`}
+                >
+                  {event.label}
+                </WhatsAppLink>
+                {index < eventTypes.length - 1 && (
+                  <i aria-hidden="true">✦</i>
+                )}
+              </span>
+            ))}
           </div>
-        </section>
+        </nav>
 
         <section className="section about-section" id="sobre">
           <div className="section-label">
@@ -241,10 +497,64 @@ function App() {
           </div>
         </section>
 
+        <section className="service-section" id="servicos">
+          <div className="section-label">
+            <span>02</span>
+            <p>Na sua proposta</p>
+          </div>
+          <div className="service-content">
+            <div className="service-heading">
+              <div>
+                <p className="section-kicker">Cuidado em cada etapa</p>
+                <h2>Uma experiência pensada para o seu evento.</h2>
+              </div>
+              <p>
+                Cada proposta é personalizada. Os itens e a estrutura incluídos
+                são definidos de acordo com o formato da celebração.
+              </p>
+            </div>
+            <div className="service-grid">
+              {serviceHighlights.map((service) => (
+                <article key={service.number}>
+                  <span>{service.number}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.text}</p>
+                </article>
+              ))}
+            </div>
+            <p className="service-note">
+              Louças, utensílios e outros itens de estrutura devem ser
+              confirmados na proposta.
+            </p>
+          </div>
+        </section>
+
+        <section className="process-section" id="como-funciona">
+          <div className="process-heading">
+            <div className="section-label light">
+              <span>03</span>
+              <p>Como funciona</p>
+            </div>
+            <div>
+              <p className="section-kicker">Do primeiro contato ao evento</p>
+              <h2>Um caminho simples para celebrar com tranquilidade.</h2>
+            </div>
+          </div>
+          <div className="process-grid">
+            {processSteps.map((step) => (
+              <article key={step.number}>
+                <span>{step.number}</span>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="menu-showcase" id="cardapio">
           <div className="section menu-heading">
             <div className="section-label light">
-              <span>02</span>
+              <span>04</span>
               <p>Nosso buffet</p>
             </div>
             <div>
@@ -257,10 +567,58 @@ function App() {
             </p>
           </div>
 
+          <div className="menu-inspirations">
+            <div className="menu-inspirations-heading">
+              <div>
+                <p className="section-kicker">Inspirações de cardápio</p>
+                <h3>Combinações para diferentes estilos de evento.</h3>
+              </div>
+              <p>
+                Uma prévia das possibilidades disponíveis. O cardápio final é
+                alinhado de acordo com o formato da sua celebração.
+              </p>
+            </div>
+
+            <div className="menu-inspirations-grid">
+              {menuInspirations.map((menu) => (
+                <article key={menu.name}>
+                  <p className="menu-type">Cardápio</p>
+                  <h4>{menu.name}</h4>
+                  <p className="menu-description">{menu.description}</p>
+                  <ul>
+                    {menu.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+
+            <div className="menu-inspirations-footer">
+              <p>
+                Itens, substituições e disponibilidade são confirmados na
+                proposta personalizada.
+              </p>
+              <WhatsAppLink
+                className="button menu-button"
+                message="Olá! Gostaria de conhecer as opções de cardápio para o meu evento."
+              >
+                Montar meu cardápio
+                <span aria-hidden="true">↗</span>
+              </WhatsAppLink>
+            </div>
+          </div>
+
           <div className="gallery" aria-label="Galeria de pratos do Buffet Divino">
             {gallery.map((image) => (
               <figure className={image.className || ''} key={image.src}>
-                <img src={image.src} alt={image.alt} loading="lazy" />
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  width={image.width}
+                  height={image.height}
+                  loading="lazy"
+                />
               </figure>
             ))}
           </div>
@@ -268,7 +626,7 @@ function App() {
 
         <section className="section testimonials-section" id="depoimentos">
           <div className="section-label">
-            <span>03</span>
+            <span>05</span>
             <p>Quem já viveu</p>
           </div>
           <div className="testimonials-content">
@@ -277,26 +635,21 @@ function App() {
                 <p className="section-kicker">Histórias reais</p>
                 <h2>O carinho de quem já celebrou com a gente.</h2>
               </div>
-              <p>Arraste para o lado e conheça mais experiências.</p>
+              <p>Use as setas ou arraste para conhecer mais experiências.</p>
             </div>
+            <TestimonialCarousel testimonials={testimonials} />
+          </div>
+        </section>
 
-            <div className="testimonials-track">
-              {testimonials.map((testimonial) => (
-                <article className="testimonial-card" key={testimonial.name}>
-                  <div className="stars" aria-label="5 estrelas">
-                    ★ ★ ★ ★ ★
-                  </div>
-                  <blockquote>“{testimonial.quote}”</blockquote>
-                  <footer>
-                    <span>{testimonial.name.charAt(0)}</span>
-                    <p>
-                      <strong>{testimonial.name}</strong>
-                      <small>{testimonial.event}</small>
-                    </p>
-                  </footer>
-                </article>
-              ))}
-            </div>
+        <section className="faq-section" id="duvidas">
+          <div className="section-label">
+            <span>06</span>
+            <p>Perguntas frequentes</p>
+          </div>
+          <div className="faq-content">
+            <p className="section-kicker">Antes de pedir seu orçamento</p>
+            <h2>Respostas para planejar o seu evento.</h2>
+            <Faq items={faqItems} />
           </div>
         </section>
 
@@ -308,15 +661,17 @@ function App() {
               Conte sobre o seu evento e receba um atendimento personalizado
               diretamente pelo WhatsApp.
             </p>
-            <WhatsAppLink className="button button-light">
+            <WhatsAppLink className="button button-light inline-whatsapp-cta">
               Conversar no WhatsApp
               <span aria-hidden="true">↗</span>
             </WhatsAppLink>
           </div>
           <div className="cta-image">
             <img
-              src="/images/buffet-prato-quente.png"
+              src="/images/buffet-prato-quente.webp"
               alt="Prato gratinado preparado pelo Buffet Divino"
+              width="798"
+              height="980"
               loading="lazy"
             />
           </div>
@@ -332,11 +687,13 @@ function App() {
           <p>Sabores que celebram histórias.</p>
         </div>
         <nav aria-label="Navegação do rodapé">
-          <a href="#sobre">Sobre</a>
-          <a href="#cardapio">Nosso buffet</a>
-          <a href="#depoimentos">Depoimentos</a>
+          <SectionLink target="sobre">Sobre</SectionLink>
+          <SectionLink target="servicos">Serviços</SectionLink>
+          <SectionLink target="cardapio">Nosso buffet</SectionLink>
+          <SectionLink target="depoimentos">Depoimentos</SectionLink>
+          <SectionLink target="duvidas">Dúvidas</SectionLink>
         </nav>
-        <WhatsAppLink className="footer-contact">
+        <WhatsAppLink className="footer-contact inline-whatsapp-cta">
           <span>Orçamentos pelo WhatsApp</span>
           <strong>(51) 99933-3072 ↗</strong>
         </WhatsAppLink>
@@ -345,7 +702,11 @@ function App() {
         </p>
       </footer>
 
-      <WhatsAppLink className="floating-whatsapp">
+      <WhatsAppLink
+        className={`floating-whatsapp ${
+          showFloatingWhatsapp ? 'is-visible' : ''
+        }`}
+      >
         <FaWhatsapp aria-hidden="true" />
         <span className="visually-hidden">Solicitar orçamento</span>
       </WhatsAppLink>
