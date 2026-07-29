@@ -212,7 +212,7 @@ const faqItems = [
 ]
 
 function getWhatsappUrl(message = whatsappMessage) {
-  return `https://wa.me/5551999333072?text=${encodeURIComponent(message)}`
+  return `https://wa.me/555199966951?text=${encodeURIComponent(message)}`
 }
 
 function WhatsAppLink({
@@ -436,13 +436,6 @@ function App() {
                 width="778"
                 height="980"
               />
-            </div>
-            <div className="hero-note">
-              <span aria-hidden="true">✦</span>
-              <p>
-                <strong>Feito com carinho</strong>
-                <small>do preparo ao serviço</small>
-              </p>
             </div>
           </div>
         </section>
@@ -695,7 +688,7 @@ function App() {
         </nav>
         <WhatsAppLink className="footer-contact inline-whatsapp-cta">
           <span>Orçamentos pelo WhatsApp</span>
-          <strong>(51) 99933-3072 ↗</strong>
+          <strong>+55 51 9996-6951 ↗</strong>
         </WhatsAppLink>
         <p className="copyright">
           © {new Date().getFullYear()} Buffet Divino
