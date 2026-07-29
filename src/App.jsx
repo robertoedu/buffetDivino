@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { track } from '@vercel/analytics'
 import Faq from './components/Faq.jsx'
 import TestimonialCarousel from './components/TestimonialCarousel.jsx'
 
@@ -219,8 +220,14 @@ function WhatsAppLink({
   children,
   className = '',
   message = whatsappMessage,
+  onClick,
   ...props
 }) {
+  const handleClick = (event) => {
+    track('whatsapp_click')
+    onClick?.(event)
+  }
+
   return (
     <a
       className={className}
@@ -228,6 +235,7 @@ function WhatsAppLink({
       target="_blank"
       rel="noreferrer"
       aria-label="Abrir conversa com o Buffet Divino pelo WhatsApp"
+      onClick={handleClick}
       {...props}
     >
       {children}
