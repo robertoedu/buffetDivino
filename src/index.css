@@ -370,7 +370,10 @@ blockquote {
 }
 
 .hero-image img {
+  width: 112%;
   height: 100%;
+  max-width: none;
+  margin-left: -6%;
   object-fit: cover;
 }
 
@@ -601,7 +604,10 @@ blockquote {
 }
 
 .gallery img {
+  width: 112%;
   height: 100%;
+  max-width: none;
+  margin-left: -6%;
   object-fit: cover;
   transition: transform 500ms ease;
 }
@@ -768,7 +774,10 @@ blockquote {
 }
 
 .cta-image img {
+  width: 112%;
   height: 100%;
+  max-width: none;
+  margin-left: -6%;
   object-fit: cover;
   object-position: 50% 64%;
 }
