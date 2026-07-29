@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { trackWhatsappClick } from './analytics.js'
 import Faq from './components/Faq.jsx'
 import TestimonialCarousel from './components/TestimonialCarousel.jsx'
 
@@ -216,11 +217,18 @@ function getWhatsappUrl(message = whatsappMessage) {
 }
 
 function WhatsAppLink({
+  analyticsSource = 'unknown',
   children,
   className = '',
   message = whatsappMessage,
+  onClick,
   ...props
 }) {
+  const handleClick = (event) => {
+    trackWhatsappClick(analyticsSource)
+    onClick?.(event)
+  }
+
   return (
     <a
       className={className}
@@ -228,6 +236,7 @@ function WhatsAppLink({
       target="_blank"
       rel="noreferrer"
       aria-label="Abrir conversa com o Buffet Divino pelo WhatsApp"
+      onClick={handleClick}
       {...props}
     >
       {children}
@@ -454,7 +463,11 @@ function App() {
           <SectionLink target="duvidas" onClick={closeMenu}>
             Dúvidas
           </SectionLink>
-          <WhatsAppLink className="nav-cta" onClick={closeMenu}>
+          <WhatsAppLink
+            analyticsSource="menu"
+            className="nav-cta"
+            onClick={closeMenu}
+          >
             Pedir orçamento
           </WhatsAppLink>
         </nav>
@@ -481,7 +494,10 @@ function App() {
               com carinho para celebrar os seus melhores momentos.
             </p>
             <div className="hero-actions">
-              <WhatsAppLink className="button button-primary inline-whatsapp-cta">
+              <WhatsAppLink
+                analyticsSource="hero"
+                className="button button-primary inline-whatsapp-cta"
+              >
                 Solicitar orçamento pelo WhatsApp
                 <span aria-hidden="true">↗</span>
               </WhatsAppLink>
@@ -541,6 +557,7 @@ function App() {
                     key={`${isDuplicate ? 'duplicate-' : ''}${event.label}`}
                   >
                     <WhatsAppLink
+                      analyticsSource="eventos"
                       message={`Olá! Gostaria de solicitar um orçamento para ${event.subject}.`}
                       tabIndex={isDuplicate ? -1 : undefined}
                     >
@@ -690,6 +707,7 @@ function App() {
                 proposta personalizada.
               </p>
               <WhatsAppLink
+                analyticsSource="cardapio"
                 className="button menu-button"
                 message="Olá! Gostaria de conhecer as opções de cardápio para o meu evento."
               >
@@ -751,7 +769,10 @@ function App() {
               Conte sobre o seu evento e receba um atendimento personalizado
               diretamente pelo WhatsApp.
             </p>
-            <WhatsAppLink className="button button-light inline-whatsapp-cta">
+            <WhatsAppLink
+              analyticsSource="cta-final"
+              className="button button-light inline-whatsapp-cta"
+            >
               Conversar no WhatsApp
               <span aria-hidden="true">↗</span>
             </WhatsAppLink>
@@ -783,7 +804,10 @@ function App() {
           <SectionLink target="depoimentos">Depoimentos</SectionLink>
           <SectionLink target="duvidas">Dúvidas</SectionLink>
         </nav>
-        <WhatsAppLink className="footer-contact inline-whatsapp-cta">
+        <WhatsAppLink
+          analyticsSource="rodape"
+          className="footer-contact inline-whatsapp-cta"
+        >
           <span>Orçamentos pelo WhatsApp</span>
           <strong>+55 51 9996-6951 ↗</strong>
         </WhatsAppLink>
@@ -793,6 +817,7 @@ function App() {
       </footer>
 
       <WhatsAppLink
+        analyticsSource="flutuante"
         className={`floating-whatsapp ${
           showFloatingWhatsapp ? 'is-visible' : ''
         }`}
