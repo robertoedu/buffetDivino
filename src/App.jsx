@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { Analytics } from '@vercel/analytics/react'
 import Faq from './components/Faq.jsx'
 import TestimonialCarousel from './components/TestimonialCarousel.jsx'
 
@@ -800,6 +801,7 @@ function App() {
         <FaWhatsapp aria-hidden="true" />
         <span className="visually-hidden">Solicitar orçamento</span>
       </WhatsAppLink>
+      <Analytics />
     </div>
   )
 }
